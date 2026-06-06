@@ -1,0 +1,53 @@
+{
+  "generated": "2026-06-06",
+  "source": "国土交通省 Project LINKS『無人航空機飛行計画データ(2025年度)』を加工して作成",
+  "population_source": "総務省統計局『令和2年国勢調査 都道府県・市区町村別の主な結果』",
+  "period": {
+    "from": "2024-07",
+    "to": "2025-06"
+  },
+  "total_records": 2971260,
+  "municipalities": 1897,
+  "matched_to_census": 1896,
+  "unmatched_to_census": 1,
+  "totals": {
+    "did": 1016446,
+    "airport": 105059,
+    "high150": 470210,
+    "night": 590110,
+    "bvlos": 706103,
+    "drop": 1055988,
+    "hazmat": 904994,
+    "low30": 1640827,
+    "event": 9258,
+    "high_risk": 2139012,
+    "monitoring": 2495687,
+    "moored": 17813,
+    "assist_n": 2715207,
+    "assist_sum": 25656946,
+    "score_sum": 13413946,
+    "total_all": 2964798,
+    "total_valid": 2870245,
+    "hokatsu": 94553
+  },
+  "high_risk_keys": [
+    "飛行空域_DID",
+    "飛行空域_空港周辺",
+    "飛行方法_夜間",
+    "飛行方法_目視外",
+    "飛行方法_物件投下"
+  ],
+  "score_weights": {
+    "DID": 2,
+    "空港周辺": 3,
+    "150m以上": 2,
+    "夜間": 2,
+    "目視外": 2,
+    "物件投下": 3,
+    "危険物": 3,
+    "30m未満": 1,
+    "催し物上空": 1
+  },
+  "hokatsu_min_flags": 10,
+  "notes": "申請(計画)ベースであり実飛行・実態ではない。元データはスキャン資料からの抽出のため完全性・正確性は保証されない。出発地は市区町村重心粒度(秘匿化)。"
+}

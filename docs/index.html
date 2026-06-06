@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>空域リスク・ドローン政策ダッシュボード | 無人航空機飛行計画(申請ベース)</title>
+<meta name="description" content="国土交通省 Project LINKS の無人航空機飛行計画データ(2025年度)を市区町村別に集計し、DID・空港周辺・夜間・目視外・物件投下などの高リスク飛行の地域分布を可視化する自治体向けダッシュボード。" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="titles">
+      <h1>空域リスク・ドローン政策ダッシュボード</h1>
+      <p class="subtitle">無人航空機 飛行計画(申請ベース)の高リスク飛行を市区町村別に可視化 — 防災・安全・まちづくりの検討資料(EBPM)</p>
+    </div>
+    <div class="period" id="periodBadge">対象期間: 2024年7月〜2025年6月</div>
+  </div>
+  <div class="disclaimer" role="note">
+    <strong>ご注意:</strong> 本データは飛行<strong>計画(申請)</strong>であり、実飛行・実態ではありません。
+    元データは紙資料のスキャン抽出を含むため、完全性・正確性は保証されません。出発地は市区町村重心レベル(秘匿化)で表示しています。
+  </div>
+</header>
+
+<main>
+  <section class="controls" aria-label="表示設定">
+    <div class="control">
+      <label for="metricSelect">リスク指標</label>
+      <select id="metricSelect"></select>
+    </div>
+    <div class="control">
+      <label for="normSelect">表示</label>
+      <select id="normSelect">
+        <option value="count">実数(件)</option>
+        <option value="percap">人口あたり(件/万人)</option>
+        <option value="share">飛行計画に占める割合(%)</option>
+      </select>
+    </div>
+    <div class="control">
+      <label for="prefSelect">都道府県で絞り込み</label>
+      <select id="prefSelect"><option value="">全国</option></select>
+    </div>
+    <div class="control hokatsu">
+      <label><input type="checkbox" id="hokatsuChk" /> 包括申請の疑い行を含める</label>
+      <span class="hint" title="飛行目的フラグが極端に多い行(包括申請の疑い)は既定でリスク集計から除外しています。">ⓘ</span>
+    </div>
+  </section>
+
+  <section class="kpis" id="kpis" aria-label="サマリー"></section>
+
+  <section class="layout">
+    <div class="map-wrap">
+      <div id="map" role="application" aria-label="市区町村別リスク地図"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <aside class="sidebar">
+      <h2>ランキング <span id="rankMetricLabel"></span></h2>
+      <ol class="ranking" id="ranking"></ol>
+    </aside>
+  </section>
+
+  <section class="trend">
+    <h2>月次推移(全国・申請件数)</h2>
+    <div id="trendChart"></div>
+    <p class="trend-note">棒: 飛行計画総数 / 折れ線: 高リスク該当件数。月の単位は「ファイル=対象月」。</p>
+  </section>
+
+  <section class="notes">
+    <h2>指標と集計方法</h2>
+    <ul>
+      <li><strong>高リスク(合成)</strong>: 飛行空域(DID・空港周辺)または飛行方法(夜間・目視外・物件投下)のいずれかに該当する飛行計画の件数。</li>
+      <li><strong>リスクスコア平均</strong>: 各リスク該当に重み(空港周辺・物件投下・危険物=3、DID・150m以上・夜間・目視外=2、30m未満・催し物上空=1)を付け、有効行で平均した値。</li>
+      <li><strong>人口あたり</strong>: 令和2年国勢調査の市区町村人口で正規化(件/万人)。人口データに突合できない地点は実数のみ表示。</li>
+      <li><strong>包括申請ノイズ</strong>: 飛行目的フラグが10個以上立つ行は包括申請の疑いとして既定で除外。チェックボックスで挙動を確認できます(地図・指標は除外後の集計)。</li>
+      <li>フィールド名の表記ゆれ(末尾空白・異体字・全半角)は正規化して参照。市区町村名は国勢調査名称に突合(郡・支庁・振興局を考慮)。</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p class="attribution">
+    出典:国土交通省 Project LINKS『無人航空機飛行計画データ(2025年度)』を加工して作成。
+    人口:総務省統計局『令和2年国勢調査』。地図:地理院タイル(国土地理院)。
+  </p>
+  <p class="meta-line" id="metaLine"></p>
+  <p class="license">
+    データライセンス:公共データ利用規約(第1.0版)/ CC BY 4.0 互換。
+    本サイトは自治体の政策検討を支援する非公式の可視化であり、個人を特定する二次加工は行っていません。
+  </p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="app.js"></script>
+</body>
+</html>

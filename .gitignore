@@ -1,0 +1,13 @@
+# 作業用に取得した巨大な元 GeoJSON (集計後は破棄する。リポジトリには含めない)
+/tmp/uav_work/
+*.geojson
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
