@@ -83,5 +83,11 @@ cd docs && python3 -m http.server 8000
 
 ## デプロイ(GitHub Pages)
 
-リポジトリ設定 → Pages で **Source: Deploy from a branch**、ブランチを選択し
-**フォルダを `/docs`** に設定します。静的ファイルのみで完結します。
+公開URL: <https://shinyanakashima.github.io/MLIT-LINKS-uav-oversight/>
+
+`.github/workflows/deploy-pages.yml` により、`main` への push で `docs/` を
+GitHub Pages へ自動デプロイします(`actions/configure-pages` → `upload-pages-artifact`
+→ `deploy-pages`)。静的ファイルのみで完結します。
+
+Actions を使わない場合は、リポジトリ設定 → Pages で **Source: Deploy from a branch**、
+ブランチ `main`・**フォルダ `/docs`** を選択しても公開できます。
