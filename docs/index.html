@@ -13,12 +13,18 @@
 <header class="site-header">
   <div class="header-inner">
     <div class="titles">
-      <h1>空域リスク・ドローン政策ダッシュボード</h1>
-      <p class="subtitle">無人航空機 飛行計画(申請ベース)の高リスク飛行を市区町村別に可視化 — 防災・安全・まちづくりの検討資料(EBPM)</p>
+      <h1 data-i18n="title">空域リスク・ドローン政策ダッシュボード</h1>
+      <p class="subtitle" data-i18n="subtitle">無人航空機 飛行計画(申請ベース)の高リスク飛行を市区町村別に可視化 — 防災・安全・まちづくりの検討資料(EBPM)</p>
     </div>
-    <div class="period" id="periodBadge">対象期間: 2024年7月〜2025年6月</div>
+    <div class="header-right">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" id="langJa" class="lang-btn" data-lang="ja">日本語</button>
+        <button type="button" id="langEn" class="lang-btn" data-lang="en">English</button>
+      </div>
+      <div class="period" id="periodBadge">対象期間: 2024年7月〜2025年6月</div>
+    </div>
   </div>
-  <div class="disclaimer" role="note">
+  <div class="disclaimer" role="note" id="disclaimer" data-i18n-html="disclaimer">
     <strong>ご注意:</strong> 本データは飛行<strong>計画(申請)</strong>であり、実飛行・実態ではありません。
     元データは紙資料のスキャン抽出を含むため、完全性・正確性は保証されません。出発地は市区町村重心レベル(秘匿化)で表示しています。
   </div>
@@ -27,24 +33,20 @@
 <main>
   <section class="controls" aria-label="表示設定">
     <div class="control">
-      <label for="metricSelect">リスク指標</label>
+      <label for="metricSelect" data-i18n="ctrl_metric">リスク指標</label>
       <select id="metricSelect"></select>
     </div>
     <div class="control">
-      <label for="normSelect">表示</label>
-      <select id="normSelect">
-        <option value="count">実数(件)</option>
-        <option value="percap">人口あたり(件/万人)</option>
-        <option value="share">飛行計画に占める割合(%)</option>
-      </select>
+      <label for="normSelect" data-i18n="ctrl_norm">表示</label>
+      <select id="normSelect"></select>
     </div>
     <div class="control">
-      <label for="prefSelect">都道府県で絞り込み</label>
-      <select id="prefSelect"><option value="">全国</option></select>
+      <label for="prefSelect" data-i18n="ctrl_pref">都道府県で絞り込み</label>
+      <select id="prefSelect"></select>
     </div>
     <div class="control hokatsu">
-      <label><input type="checkbox" id="hokatsuChk" /> 包括申請の疑い行を含める</label>
-      <span class="hint" title="飛行目的フラグが極端に多い行(包括申請の疑い)は既定でリスク集計から除外しています。">ⓘ</span>
+      <label><input type="checkbox" id="hokatsuChk" /> <span data-i18n="ctrl_hokatsu">包括申請の疑い行を含める</span></label>
+      <span class="hint" id="hokatsuHint" title="飛行目的フラグが極端に多い行(包括申請の疑い)は既定でリスク集計から除外しています。">ⓘ</span>
     </div>
   </section>
 
@@ -56,20 +58,20 @@
       <div class="legend" id="legend"></div>
     </div>
     <aside class="sidebar">
-      <h2>ランキング <span id="rankMetricLabel"></span></h2>
+      <h2><span data-i18n="rank_title">ランキング</span> <span id="rankMetricLabel"></span></h2>
       <ol class="ranking" id="ranking"></ol>
     </aside>
   </section>
 
   <section class="trend">
-    <h2>月次推移(全国・申請件数)</h2>
+    <h2 data-i18n="trend_title">月次推移(全国・申請件数)</h2>
     <div id="trendChart"></div>
-    <p class="trend-note">棒: 飛行計画総数 / 折れ線: 高リスク該当件数。月の単位は「ファイル=対象月」。</p>
+    <p class="trend-note" data-i18n="trend_note">棒: 飛行計画総数 / 折れ線: 高リスク該当件数。月の単位は「ファイル=対象月」。</p>
   </section>
 
   <section class="notes">
-    <h2>指標と集計方法</h2>
-    <ul>
+    <h2 data-i18n="notes_title">指標と集計方法</h2>
+    <ul id="notesList" data-i18n-html="notes_list">
       <li><strong>高リスク(合成)</strong>: 飛行空域(DID・空港周辺)または飛行方法(夜間・目視外・物件投下)のいずれかに該当する飛行計画の件数。</li>
       <li><strong>リスクスコア平均</strong>: 各リスク該当に重み(空港周辺・物件投下・危険物=3、DID・150m以上・夜間・目視外=2、30m未満・催し物上空=1)を付け、有効行で平均した値。</li>
       <li><strong>人口あたり</strong>: 令和2年国勢調査の市区町村人口で正規化(件/万人)。人口データに突合できない地点は実数のみ表示。</li>
@@ -80,12 +82,12 @@
 </main>
 
 <footer class="site-footer">
-  <p class="attribution">
+  <p class="attribution" id="attribution" data-i18n-html="attribution">
     出典:国土交通省 Project LINKS『無人航空機飛行計画データ(2025年度)』を加工して作成。
     人口:総務省統計局『令和2年国勢調査』。地図:地理院タイル(国土地理院)。
   </p>
   <p class="meta-line" id="metaLine"></p>
-  <p class="license">
+  <p class="license" id="license" data-i18n-html="license">
     データライセンス:公共データ利用規約(第1.0版)/ CC BY 4.0 互換。
     本サイトは自治体の政策検討を支援する非公式の可視化であり、個人を特定する二次加工は行っていません。
   </p>
@@ -93,6 +95,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="i18n.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

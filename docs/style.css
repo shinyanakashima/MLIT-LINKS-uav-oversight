@@ -33,6 +33,15 @@ h1, h2 { line-height: 1.3; }
   font-size: .82rem; background: rgba(255, 255, 255, .14);
   border: 1px solid rgba(255, 255, 255, .3); padding: 5px 10px; border-radius: 999px; white-space: nowrap;
 }
+.header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.lang-switch { display: inline-flex; border: 1px solid rgba(255, 255, 255, .4); border-radius: 999px; overflow: hidden; }
+.lang-btn {
+  font: inherit; font-size: .78rem; padding: 4px 12px; cursor: pointer;
+  background: transparent; color: #d8e6f4; border: 0; line-height: 1.6;
+}
+.lang-btn + .lang-btn { border-left: 1px solid rgba(255, 255, 255, .4); }
+.lang-btn:hover { background: rgba(255, 255, 255, .12); }
+.lang-btn.active { background: #fff; color: var(--brand-d); font-weight: 700; }
 .disclaimer {
   background: var(--warn-bg); color: #6b4a13; border-top: 1px solid var(--warn-line);
   font-size: .82rem; padding: 8px 20px; text-align: center;
