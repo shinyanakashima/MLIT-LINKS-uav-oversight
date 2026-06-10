@@ -26,7 +26,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-OUT_DIR = ROOT / "docs" / "data"
+OUT_DIR = ROOT / "public" / "data"
 POP_PATH = OUT_DIR / "population.json"
 WORK = Path(os.environ.get("UAV_WORKDIR", "/tmp/uav_work"))
 

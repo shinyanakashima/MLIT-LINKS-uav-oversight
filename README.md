@@ -6,7 +6,7 @@
 
 🌐 **公開サイト: <https://shinyanakashima.github.io/MLIT-LINKS-uav-oversight/>**
 
-![ダッシュボードの画面](docs/screenshot.png)
+![ダッシュボードの画面](screenshot.png)
 
 > **English:** An interactive dashboard that maps where high-risk drone flight *plans* (in densely inhabited districts, near airports, at night, beyond visual line of sight, with object dropping, etc.) concentrate across Japanese municipalities, intended as a starting point for local-government safety policy and evidence-based decision making. The UI has a Japanese/English toggle (top-right). See the live site above.
 
@@ -61,45 +61,57 @@
 
 ## 技術構成
 
-- **フロントエンドのみで完結する静的サイト**です（サーバーサイド処理なし）。
-  - 地図ライブラリ: [Leaflet](https://leafletjs.com/)（CDN 読み込み）／背景地図: 地理院タイル（いずれも API キー不要）。
-  - グラフは依存ライブラリなしの自前 SVG 描画。
+- **フロントエンド**: React + TypeScript + Vite。UI は Tailwind CSS v4 + shadcn/ui、地図は **MapLibre GL JS**、
+  背景は**地理院タイル**（標準地図／衛星写真を切替、いずれも API キー不要）。月次グラフは依存ライブラリなしの自前 SVG。
+- **外部 CDN 非依存**: ライブラリはすべてビルド時にバンドルし、実行時に外部 CDN へ依存しません（取得するのは地理院タイルのみ）。
 - 表示するのは**集計済みの軽量 JSON**だけです。元の飛行計画 GeoJSON（全16ファイル・合計約15GB）はリポジトリに含めず、
   集計スクリプトが配信元から都度ダウンロードして処理します。
+- パッケージマネージャーは **pnpm**。
 
 ```
-docs/                     公開対象（静的サイト本体）
-  index.html              画面の構造
-  style.css               スタイル
-  app.js                  地図・指標・グラフ・言語切替のロジック
-  i18n.js                 日本語/英語の文言辞書
-  screenshot.png          README 用スクリーンショット
+index.html                 Vite のエントリ
+src/
+  main.tsx                 ブートストラップ
+  App.tsx                  画面全体の状態・レイアウト
+  components/
+    MapView.tsx            MapLibre 地図（比例シンボル・凡例・背景切替）
+    TrendChart.tsx         月次推移グラフ（SVG）
+    ui/                    shadcn/ui コンポーネント（card / button / select）
+  lib/
+    i18n.ts                日本語/英語の文言辞書
+    metrics.ts             指標の算出・配色・正規化ロジック
+    types.ts               型定義
+    utils.ts               cn() ユーティリティ
+public/
+  .nojekyll
   data/
-    municipalities.json   市区町村別の集計（地図・ランキングの元データ）
-    monthly.json          月次推移（全国・都道府県別）
-    meta.json             集計メタ情報（件数・人口突合率・生成日・出典）
-    population.json        令和2年国勢調査の市区町村人口マスタ
+    municipalities.json    市区町村別の集計（地図・ランキングの元データ）
+    monthly.json           月次推移（全国・都道府県別）
+    meta.json              集計メタ情報（件数・人口突合率・生成日・出典）
+    population.json         令和2年国勢調査の市区町村人口マスタ
 scripts/
-  build_population.py      国勢調査 xlsx → population.json を生成
-  aggregate.py             飛行計画 GeoJSON（約297万件）→ 集計 JSON を生成
+  build_population.py      国勢調査 xlsx → public/data/population.json を生成
+  aggregate.py             飛行計画 GeoJSON（約297万件）→ public/data の集計 JSON を生成
   source_census_2020.xlsx  国勢調査の元データ（人口マスタの取得元）
 .github/workflows/
-  deploy-pages.yml         main への push で GitHub Pages へ自動デプロイ
+  deploy-pages.yml         main への push で build → GitHub Pages へ自動デプロイ
 ```
 
 ## ローカルで動かす
 
-集計済みデータは同梱済みなので、`docs/` を静的配信するだけで表示できます。
-
 ```bash
-cd docs
-python3 -m http.server 8000
-# ブラウザで http://localhost:8000/ を開く
+pnpm install
+pnpm dev        # 開発サーバー（http://localhost:5173/MLIT-LINKS-uav-oversight/）
+
+# 本番ビルドの確認
+pnpm build      # dist/ を生成
+pnpm preview
 ```
 
 ## データ集計を再現する
 
 集計済み JSON を作り直したい場合のみ実行します（ネットワークと、1 ファイルあたり約1GB の一時ディスク領域が必要です）。
+出力先は `public/data/` です。
 
 ```bash
 # 1) 国勢調査 xlsx から人口マスタを生成
@@ -119,14 +131,12 @@ python3 scripts/aggregate.py
 
 ## デプロイ
 
-`main` ブランチへの push をトリガーに、`.github/workflows/deploy-pages.yml` が `docs/` を
-GitHub Pages へ自動デプロイします（`actions/configure-pages` → `upload-pages-artifact` → `deploy-pages`）。
-
-Actions を使わない場合は、リポジトリの **Settings → Pages** で
-**Source =「Deploy from a branch」**、ブランチ `main`・フォルダ `/docs` を選択しても公開できます。
+`main` ブランチへの push をトリガーに、`.github/workflows/deploy-pages.yml` が
+**pnpm でビルドした `dist/` を GitHub Pages へ自動デプロイ**します
+（`pnpm install` → `pnpm build` → `upload-pages-artifact` → `deploy-pages`）。ビルド成果物はリポジトリにはコミットしません。
 
 ## ライセンス
 
-- ソースコード: 本リポジトリのコード（`docs/`, `scripts/` 等）は自由に利用できます。
+- ソースコード: 本リポジトリのコード（`src/`, `scripts/` 等）は自由に利用できます。
 - データ: 上記「データソース・出典」の各提供元の利用条件に従ってください（**出典表記が必須**）。
 - 本サイトは自治体の政策検討を支援する**非公式**の可視化であり、個人を特定する二次加工は行っていません。

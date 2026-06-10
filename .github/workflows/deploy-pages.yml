@@ -19,13 +19,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Pages を「GitHub Actions」ソースとして有効化(環境ゲートのない build ジョブで先に実行)
-      - uses: actions/configure-pages@v5
+      - uses: pnpm/action-setup@v4
         with:
-          enablement: true
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: dist
 
   deploy:
     needs: build

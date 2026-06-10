@@ -2,6 +2,11 @@
 /tmp/uav_work/
 *.geojson
 
+# Node / Vite
+node_modules/
+dist/
+*.local
+
 # Python
 __pycache__/
 *.pyc

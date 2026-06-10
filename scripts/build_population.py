@@ -21,7 +21,7 @@ import openpyxl
 
 HERE = Path(__file__).resolve().parent
 SRC = HERE / "source_census_2020.xlsx"
-OUT = HERE.parent / "docs" / "data" / "population.json"
+OUT = HERE.parent / "public" / "data" / "population.json"
 
 
 def norm(s):
