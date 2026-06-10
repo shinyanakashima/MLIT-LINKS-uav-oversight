@@ -78,6 +78,7 @@ export default function MapView({ features, legend, basemap, onBasemapChange, di
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-left');
     mapRef.current = map;
+    map.on('error', (e) => console.error('[maplibre]', e.error?.message ?? e));
 
     map.on('load', () => {
       map.addSource('munis', { type: 'geojson', data: toGeoJSON(featuresRef.current) });
@@ -139,8 +140,12 @@ export default function MapView({ features, legend, basemap, onBasemapChange, di
   }, [focus]);
 
   return (
-    <div className="relative h-[620px] overflow-hidden rounded-xl border shadow-sm">
-      <div ref={containerRef} className="absolute inset-0" />
+    <div className="relative">
+      <div
+        ref={containerRef}
+        className="w-full overflow-hidden rounded-xl border shadow-sm"
+        style={{ height: 'clamp(380px, 68vh, 640px)' }}
+      />
 
       {/* 背景地図トグル */}
       <div className="absolute right-3 top-3 z-10 inline-flex overflow-hidden rounded-md border bg-card/95 text-xs shadow-sm">
