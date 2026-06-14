@@ -140,12 +140,8 @@ export default function MapView({ features, legend, basemap, onBasemapChange, di
   }, [focus]);
 
   return (
-    <div className="relative">
-      <div
-        ref={containerRef}
-        className="w-full overflow-hidden rounded-xl border shadow-sm"
-        style={{ height: 'clamp(380px, 68vh, 640px)' }}
-      />
+    <div className="relative h-full">
+      <div ref={containerRef} className="h-full w-full overflow-hidden rounded-xl border shadow-sm" />
 
       {/* 背景地図トグル */}
       <div className="absolute right-3 top-3 z-10 inline-flex overflow-hidden rounded-md border bg-card/95 text-xs shadow-sm">

@@ -207,11 +207,13 @@ export default function App() {
         ))}
       </div>
 
-      {/* 地図 + ランキング */}
-      <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-        <MapView features={features} legend={legend} basemap={basemap} onBasemapChange={setBasemap} dict={dict} focus={focus} />
-        <Card>
-          <CardContent className="max-h-[620px] overflow-auto p-4">
+      {/* 地図 + ランキング（高さはレイアウト側が定義し、各コンポーネントは満たすだけ） */}
+      <div className="grid gap-4 lg:h-[clamp(420px,70vh,680px)] lg:grid-cols-[1fr_360px]">
+        <div className="h-[60vh] min-h-[360px] lg:h-full">
+          <MapView features={features} legend={legend} basemap={basemap} onBasemapChange={setBasemap} dict={dict} focus={focus} />
+        </div>
+        <Card className="overflow-hidden lg:h-full">
+          <CardContent className="h-full overflow-auto p-4">
             <h2 className="mb-2.5 text-base font-semibold">
               {dict.rank_title} <span className="text-xs font-normal text-muted-foreground">— {dict.metrics[metric]}({unitSuffix(dict, metric, norm).trim()})</span>
             </h2>
